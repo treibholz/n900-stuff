@@ -3,6 +3,8 @@
 # primitive script to load the battery of a Nokia N900 without the proprietary
 # daemon
 
+# this is the percentage below which the charging should start
+START_CHARGING=95
 
 battery_present () { # {{{
     if grep -q 1 /sys/class/power_supply/bq27200-0/present; then
@@ -42,7 +44,7 @@ function battery_load () { # {{{
     # tickle watchdog, while status indicates 'charging from wallcharger'
     #while [ $(i2cget -y 2 0x6b 0x00) = 0x90 ] ; do
     while [ $(i2cget -y 2 0x6b 0x00) = 0x10 ] ; do
-            echo charging...
+            echo "charging... $(battery_percent)%"
             sleep 28;
             # reset watchdog timer:
             i2cset -y -m 0x80 2 0x6b 0x00 0x80
@@ -52,9 +54,13 @@ function battery_load () { # {{{
 while true; do
 
     if battery_present && charger_present; then
-        echo "Start charging..."
-        battery_load
-        echo "Stop charging..."
+        if [ $(battery_percent) -le ${START_CHARGING} ] ; then
+            echo "Start charging..."
+            battery_load
+            echo "Stop charging..."
+        else
+            echo "Battery is charged at $(battery_percent)%"
+        fi
     else
         sleep 10
 
