@@ -63,7 +63,6 @@ while true; do
         fi
     else
         sleep 10
-
     fi
 
 done
