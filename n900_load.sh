@@ -60,6 +60,7 @@ while true; do
             echo "Stop charging..."
         else
             echo "Battery is charged at $(battery_percent)%"
+            sleep 60
         fi
     else
         sleep 10
