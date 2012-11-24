@@ -15,7 +15,7 @@ battery_present () { # {{{
 } # }}}
 
 charger_present () { # {{{
-    if grep -qE '(1|on)' /sys/bus/platform/devices/twl4030_usb/vbus; then
+    if grep -qE '(1|off)' /sys/bus/platform/devices/twl4030_usb/vbus; then
         return 1
     else
         return 1
